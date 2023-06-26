@@ -26,11 +26,16 @@
 	<xsl:param name="deployerPort"/>
 	<xsl:param name="deployerUsername"/>
 	<xsl:param name="deployerPassword"/>
-	
+	<xsl:param name="ISAliasTest"/>
 	<xsl:param name="testISHost"/>
 	<xsl:param name="testISPort"/>
 	<xsl:param name="testISUsername"/>
 	<xsl:param name="testISPassword"/>
+	<xsl:param name="ISAliasDev"/>
+	<xsl:param name="devISHost"/>
+	<xsl:param name="devISPort"/>
+	<xsl:param name="devISUsername"/>
+	<xsl:param name="devISPassword"/>
 	
 	<xsl:param name="repoName"/>
 	<xsl:param name="repoPath"/>
@@ -53,6 +58,8 @@
 	<xsl:template match="DeployerSpec/Environment">
 	    <Environment>
 			<IS>
+			<xsl:choose>
+			<xsl:when test="string-length($ISAliasTest) > 0">
 				<isalias name="testServer">
 					<host><xsl:value-of select="$testISHost"/></host>
 					<port><xsl:value-of select="$testISPort"/></port>
@@ -62,7 +69,23 @@
 					<installDeployerResource>true</installDeployerResource>
 					<Test>true</Test>
 				</isalias>
+				</xsl:when>
+				<xsl:otherwise>
+				<isalias name="devServer">
+					<host><xsl:value-of select="$devISHost"/></host>
+					<port><xsl:value-of select="$devISPort"/></port>
+					<user><xsl:value-of select="$devISUsername"/></user>
+					<pwd><xsl:value-of select="$devISPassword"/></pwd>
+					<useSSL>false</useSSL>
+					<installDeployerResource>true</installDeployerResource>
+					<Test>true</Test>
+				</isalias>
+				</xsl:otherwise>
+				
+					</xsl:choose>
 			</IS>
+			
+			
 			<xsl:apply-templates select="@* | *" />
 		</Environment>
 	</xsl:template>
